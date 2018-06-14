@@ -24,7 +24,6 @@
 #else
  #include <WProgram.h>
 #endif
-#include <Adafruit_Sensor.h>
 #include <Wire.h>
 
 #define TSL2591_VISIBLE           (2)       ///< (channel 0) - (channel 1)
@@ -129,7 +128,7 @@ tsl2591Gain_t;
     @brief  Class that stores state and functions for interacting with TSL2591 Light Sensor
 */
 /**************************************************************************/
-class Adafruit_TSL2591 : public Adafruit_Sensor
+class Adafruit_TSL2591
 {
  public:
   Adafruit_TSL2591(int32_t sensorID = -1);
@@ -151,10 +150,6 @@ class Adafruit_TSL2591 : public Adafruit_Sensor
   void    clearInterrupt(void);
   void    registerInterrupt(uint16_t lowerThreshold, uint16_t upperThreshold, tsl2591Persist_t persist);
   uint8_t getStatus();
-  
-  /* Unified Sensor API Functions */  
-  bool getEvent  ( sensors_event_t* );
-  void getSensor ( sensor_t* );
 
  private:
   void      write8  ( uint8_t r);

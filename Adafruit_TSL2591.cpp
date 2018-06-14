@@ -430,63 +430,6 @@ uint8_t Adafruit_TSL2591::getStatus(void)
   return x;
 }
 
-/************************************************************************/
-/*!
-    @brief  Gets the most recent sensor event
-    @param  event Pointer to Adafruit_Sensor sensors_event_t object that will be filled with sensor data
-    @return True on success, False on failure
-*/
-/**************************************************************************/
-bool Adafruit_TSL2591::getEvent(sensors_event_t *event)
-{
-  uint16_t ir, full;
-  uint32_t lum = getFullLuminosity();
-  /* Early silicon seems to have issues when there is a sudden jump in */
-  /* light levels. :( To work around this for now sample the sensor 2x */
-  lum = getFullLuminosity();
-  ir = lum >> 16;
-  full = lum & 0xFFFF;
-
-  /* Clear the event */
-  memset(event, 0, sizeof(sensors_event_t));
-
-  event->version   = sizeof(sensors_event_t);
-  event->sensor_id = _sensorID;
-  event->type      = SENSOR_TYPE_LIGHT;
-  event->timestamp = millis();
-
-  /* Calculate the actual lux value */
-  /* 0 = sensor overflow (too much light) */
-  event->light = calculateLux(full, ir);
-
-  return true;
-}
-
-/**************************************************************************/
-/*!
-    @brief  Gets the overall sensor_t data including the type, range and resulution
-    @param  sensor Pointer to Adafruit_Sensor sensor_t object that will be filled with sensor type data
-*/
-/**************************************************************************/
-void Adafruit_TSL2591::getSensor(sensor_t *sensor)
-{
-  /* Clear the sensor_t object */
-  memset(sensor, 0, sizeof(sensor_t));
-
-  /* Insert the sensor name in the fixed length char array */
-  strncpy (sensor->name, "TSL2591", sizeof(sensor->name) - 1);
-  sensor->name[sizeof(sensor->name)- 1] = 0;
-  sensor->version     = 1;
-  sensor->sensor_id   = _sensorID;
-  sensor->type        = SENSOR_TYPE_LIGHT;
-  sensor->min_delay   = 0;
-  sensor->max_value   = 88000.0;
-  sensor->min_value   = 0.0;
-  sensor->resolution  = 0.001;
-}
-/*******************************************************/
-
-
 uint8_t Adafruit_TSL2591::read8(uint8_t reg)
 {
   uint8_t x;
