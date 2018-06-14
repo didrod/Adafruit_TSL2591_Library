@@ -63,11 +63,13 @@
           it will tag sensorEvents you create.
   */
 /**************************************************************************/
-Adafruit_TSL2591::Adafruit_TSL2591(int32_t sensorID) {
+Adafruit_TSL2591::Adafruit_TSL2591(
+    TwoWire* wire,
+    uint8_t address
+): wire(wire), address(address) {
     _initialized = false;
     _integration = TSL2591_INTEGRATIONTIME_100MS;
     _gain        = TSL2591_GAIN_MED;
-    _sensorID    = sensorID;
 
     // we cant do wire initialization till later,
     // because we havent loaded Wire yet
@@ -80,7 +82,7 @@ Adafruit_TSL2591::Adafruit_TSL2591(int32_t sensorID) {
   */
 /**************************************************************************/
 boolean Adafruit_TSL2591::begin() {
-    Wire.begin();
+    wire->begin();
 
     uint8_t id = read8(TSL2591_COMMAND_BIT | TSL2591_REGISTER_DEVICE_ID);
     if (id != 0x50 ) {
@@ -434,12 +436,12 @@ uint8_t Adafruit_TSL2591::getStatus() {
 uint8_t Adafruit_TSL2591::read8(uint8_t reg) {
     uint8_t x;
 
-    Wire.beginTransmission(TSL2591_ADDR);
-    Wire.write(reg);
-    Wire.endTransmission();
+    wire->beginTransmission(address);
+    wire->write(reg);
+    wire->endTransmission();
 
-    Wire.requestFrom(TSL2591_ADDR, 1);
-    x = Wire.read();
+    wire->requestFrom(address, static_cast<uint8_t>(1));
+    x = wire->read();
 
     return x;
 }
@@ -448,13 +450,13 @@ uint16_t Adafruit_TSL2591::read16(uint8_t reg) {
     uint16_t x;
     uint16_t t;
 
-    Wire.beginTransmission(TSL2591_ADDR);
-    Wire.write(reg);
-    Wire.endTransmission();
+    wire->beginTransmission(address);
+    wire->write(reg);
+    wire->endTransmission();
 
-    Wire.requestFrom(TSL2591_ADDR, 2);
-    t = Wire.read();
-    x = Wire.read();
+    wire->requestFrom(address, static_cast<uint8_t>(2));
+    t = wire->read();
+    x = wire->read();
 
     x <<= 8;
     x |= t;
@@ -462,14 +464,14 @@ uint16_t Adafruit_TSL2591::read16(uint8_t reg) {
 }
 
 void Adafruit_TSL2591::write8 (uint8_t reg, uint8_t value) {
-    Wire.beginTransmission(TSL2591_ADDR);
-    Wire.write(reg);
-    Wire.write(value);
-    Wire.endTransmission();
+    wire->beginTransmission(address);
+    wire->write(reg);
+    wire->write(value);
+    wire->endTransmission();
 }
 
 void Adafruit_TSL2591::write8 (uint8_t reg) {
-    Wire.beginTransmission(TSL2591_ADDR);
-    Wire.write(reg);
-    Wire.endTransmission();
+    wire->beginTransmission(address);
+    wire->write(reg);
+    wire->endTransmission();
 }
