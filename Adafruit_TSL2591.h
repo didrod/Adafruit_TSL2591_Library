@@ -26,9 +26,11 @@
 #endif
 #include <Wire.h>
 
-#define TSL2591_VISIBLE           (2)       ///< (channel 0) - (channel 1)
-#define TSL2591_INFRARED          (1)       ///< channel 1
-#define TSL2591_FULLSPECTRUM      (0)       ///< channel 0
+typedef enum __TSL_2591_DetectionRange_TAG__ {
+    TSL2591_VISIBLE = 2,
+    TSL2591_INFRARED = 1,
+    TSL2591_FULLSPECTRUM = 0,
+} Tsl2591DetectionRange;
 
 #define TSL2591_ADDR              (0x29)    ///< Default I2C address
 
